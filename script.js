@@ -38,20 +38,24 @@ async function getWeather(city) {
             `${API_URL}?q=${city}&appid=${API_KEY}&units=metric`
         );
 
+        // Parse body so we can show API error messages if any
+        const data = await response.json();
+
         // Check if request was successful
         if (!response.ok) {
-            throw new Error('City not found');
+            // OpenWeather returns { message: '...' } for many errors
+            throw new Error(data.message || 'City not found');
         }
-
-        // Get the data
-        const data = await response.json();
 
         // Display the weather
         displayWeather(data);
 
     } catch (error) {
-        // Show error message
-        errorMessage.textContent = 'City not found! Try again.';
+        // Log detailed error to console to help debugging
+        console.error('Weather fetch error:', error);
+
+        // Show a helpful message to the user
+        errorMessage.textContent = error.message || 'An error occurred. Try again.';
         errorMessage.classList.remove('hidden');
     }
 }
