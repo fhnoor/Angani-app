@@ -46,5 +46,11 @@
         </section>
     </main>
     <script src="auth.js"></script>
+    <script>
+        // Ensure auth.js targets the Flask backend when opened from file:// or other origins
+        if (!window.ANGANI_API_BASE) {
+            window.ANGANI_API_BASE = 'http://127.0.0.1:5000';
+        }
+    </script>
 </body>
 </html>

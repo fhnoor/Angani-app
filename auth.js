@@ -3,9 +3,18 @@
 // API base resolver: if the UI is served from a static dev server (e.g. 127.0.0.1:5500),
 // direct requests to the Flask API on 127.0.0.1:5000 unless a custom base is provided.
 const API_BASE = (() => {
+    // Explicit override wins
     if (window.ANGANI_API_BASE) return window.ANGANI_API_BASE.replace(/\/$/, '');
-    const { origin, port } = window.location;
+
+    const { origin, port, protocol } = window.location;
+
+    // Live Server default -> target Flask
     if (port === '5500') return 'http://127.0.0.1:5000';
+
+    // file:// pages should call local Flask
+    if (protocol === 'file:') return 'http://127.0.0.1:5000';
+
+    // Fallback: same origin
     return origin;
 })();
 
@@ -107,7 +116,9 @@ if (signinForm) {
             setTimeout(() => window.location.href = 'home.html', 1000);
         } catch (error) {
             console.error('Login error:', error);
-            showNotification(error.message || 'Network error. Make sure the server is running.', 'error');
+            // Surface more helpful guidance
+            const hint = error.message.includes('Failed to fetch') ? 'Is the Flask server running at 127.0.0.1:5000?' : '';
+            showNotification(`${error.message || 'Network error. Make sure the server is running.'}${hint ? ' ' + hint : ''}`, 'error');
         }
     });
 }
@@ -141,7 +152,8 @@ if (signupForm) {
             setTimeout(() => window.location.href = 'home.html', 800);
         } catch (error) {
             console.error('Signup error:', error);
-            showNotification(error.message || 'Network error. Make sure the server is running.', 'error');
+            const hint = error.message.includes('Failed to fetch') ? 'Is the Flask server running at 127.0.0.1:5000?' : '';
+            showNotification(`${error.message || 'Network error. Make sure the server is running.'}${hint ? ' ' + hint : ''}`, 'error');
         }
     });
 }
