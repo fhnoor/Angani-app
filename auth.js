@@ -1,5 +1,35 @@
 // Authentication helper for home.html
 
+// API base resolver: if the UI is served from a static dev server (e.g. 127.0.0.1:5500),
+// direct requests to the Flask API on 127.0.0.1:5000 unless a custom base is provided.
+const API_BASE = (() => {
+    if (window.ANGANI_API_BASE) return window.ANGANI_API_BASE.replace(/\/$/, '');
+    const { origin, port } = window.location;
+    if (port === '5500') return 'http://127.0.0.1:5000';
+    return origin;
+})();
+
+async function postForm(path, formData) {
+    const response = await fetch(`${API_BASE}${path}`, { method: 'POST', body: formData });
+    const contentType = response.headers.get('content-type') || '';
+    const isJson = contentType.includes('application/json');
+
+    let data = null;
+    if (isJson) {
+        data = await response.json();
+    } else {
+        // Non-JSON responses (e.g., HTML 404 from static server) should surface a clear error
+        const text = await response.text();
+        throw new Error(`Server returned ${response.status} ${response.statusText || ''} (non-JSON)${text ? `: ${text.slice(0, 120)}` : ''}`);
+    }
+
+    if (!response.ok) {
+        throw new Error(data.message || `Request failed with status ${response.status}`);
+    }
+
+    return data;
+}
+
 // Check if user is logged in
 function isLoggedIn() {
     return sessionStorage.getItem('isLoggedIn') === 'true';
@@ -69,32 +99,15 @@ if (signinForm) {
         const formData = new FormData(signinForm);
         
         try {
-            const response = await fetch('/signin', {
-                method: 'POST',
-                body: formData
-            });
-            
-            let data;
-            try {
-                data = await response.json();
-            } catch (jsonError) {
-                console.error('JSON parse error:', jsonError);
-                showNotification('Server error. Please try again.', 'error');
-                return;
-            }
-            
-            if (data.success) {
-                // Store login state
-                sessionStorage.setItem('isLoggedIn', 'true');
-                sessionStorage.setItem('userName', data.name);
-                showNotification('Welcome back! Redirecting...', 'success');
-                setTimeout(() => window.location.href = 'home.html', 1000);
-            } else {
-                showNotification(data.message || 'Login failed. Please check your credentials.', 'error');
-            }
+            const data = await postForm('/signin', formData);
+            // Store login state
+            sessionStorage.setItem('isLoggedIn', 'true');
+            sessionStorage.setItem('userName', data.name);
+            showNotification('Welcome back! Redirecting...', 'success');
+            setTimeout(() => window.location.href = 'home.html', 1000);
         } catch (error) {
             console.error('Login error:', error);
-            showNotification('Network error. Make sure the server is running.', 'error');
+            showNotification(error.message || 'Network error. Make sure the server is running.', 'error');
         }
     });
 }
@@ -116,36 +129,19 @@ if (signupForm) {
         }
         
         try {
-            const response = await fetch('/signup', {
-                method: 'POST',
-                body: formData
-            });
-            
-            let data;
-            try {
-                data = await response.json();
-            } catch (jsonError) {
-                console.error('JSON parse error:', jsonError);
-                showNotification('Server error. Please try again.', 'error');
-                return;
-            }
-            
-            if (data.success) {
-                // Persist login state so home.html guard allows access
-                sessionStorage.setItem('isLoggedIn', 'true');
-                const nameFromForm = formData.get('name');
-                const emailFromForm = formData.get('email');
-                const fallback = emailFromForm ? emailFromForm.split('@')[0] : 'User';
-                sessionStorage.setItem('userName', (data.name || nameFromForm || fallback));
+            const data = await postForm('/signup', formData);
+            // Persist login state so home.html guard allows access
+            sessionStorage.setItem('isLoggedIn', 'true');
+            const nameFromForm = formData.get('name');
+            const emailFromForm = formData.get('email');
+            const fallback = emailFromForm ? emailFromForm.split('@')[0] : 'User';
+            sessionStorage.setItem('userName', (data.name || nameFromForm || fallback));
 
-                showNotification('Account created successfully! Redirecting to Home page...', 'success');
-                setTimeout(() => window.location.href = 'home.html', 800);
-            } else {
-                showNotification(data.message || 'Signup failed. Please try again.', 'error');
-            }
+            showNotification('Account created successfully! Redirecting to Home page...', 'success');
+            setTimeout(() => window.location.href = 'home.html', 800);
         } catch (error) {
             console.error('Signup error:', error);
-            showNotification('Network error. Make sure the server is running.', 'error');
+            showNotification(error.message || 'Network error. Make sure the server is running.', 'error');
         }
     });
 }
