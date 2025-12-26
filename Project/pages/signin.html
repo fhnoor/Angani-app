@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Sign In — Angani Kwetu</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <main class="auth-page">
+        <section class="auth-card">
+            <header class="auth-header">
+                <h1>Welcome back</h1>
+                <p class="muted">Sign in to access your weather preferences.</p>
+            </header>
+
+            <form id="signin-form" class="auth-form" action="/signin" method="POST" novalidate>
+                <label class="field">
+                    <span class="label-text">Email</span>
+                    <input type="email" name="email" placeholder="you@example.com" autocomplete="email">
+                </label>
+
+                <label class="field">
+                    <span class="label-text">Password</span>
+                    <input type="password" name="password" placeholder="Your password" autocomplete="current-password">
+                </label>
+
+                <div class="row between">
+                    <label class="remember"><input type="checkbox"> Remember me</label>
+                    <a class="small" href="#">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn primary">Sign in</button>
+
+                <div class="hr"><span>or</span></div>
+
+                <p class="small muted">New here? <a href="signup.html">Create an account</a></p>
+                
+            </form>
+
+            <footer class="auth-foot">
+                <a href="landing.html">← Back to Home</a>
+            </footer>
+        </section>
+    </main>
+    <script src="auth.js"></script>
+</body>
+</html>

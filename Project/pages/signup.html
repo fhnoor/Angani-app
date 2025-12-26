@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Sign Up — Angani Kwetu</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <main class="auth-page">
+        <section class="auth-card">
+            <header class="auth-header">
+                <h1>Create account</h1>
+                <p class="muted">Join Angani to get local weather updates and more.</p>
+            </header>
+
+            <form id="signup-form" class="auth-form" action="/signup" method="POST" novalidate>
+                <label class="field">
+                    <span class="label-text">Full name</span>
+                    <input type="text" name="name" placeholder="Jane Doe" autocomplete="name">
+                </label>
+
+                <label class="field">
+                    <span class="label-text">Email</span>
+                    <input type="email" name="email" placeholder="you@example.com" autocomplete="email">
+                </label>
+
+                <label class="field">
+                    <span class="label-text">Password</span>
+                    <input type="password" name="password" placeholder="Create a password" autocomplete="new-password">
+                </label>
+
+                <label class="field">
+                    <span class="label-text">Confirm password</span>
+                    <input type="password" name="confirm" placeholder="Repeat password" autocomplete="new-password">
+                </label>
+
+                <button type="submit" class="btn primary">Create account</button>
+
+                <div class="hr"><span>or</span></div>
+
+                <p class="small muted">Already have an account? <a href="signin.html">Sign in</a></p>
+            </form>
+
+            <footer class="auth-foot">
+                <a href="landing.html">← Back to Home</a>
+            </footer>
+        </section>
+    </main>
+    <script src="auth.js"></script>
+</body>
+</html>
