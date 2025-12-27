@@ -1,7 +1,14 @@
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from flask import Flask, request, redirect, send_from_directory, session, jsonify
 from my_db import create_table, add_user, check_user
 
-app = Flask(__name__)
+# Configure Flask to serve static files from frontend folder
+app = Flask(__name__, 
+            static_folder=os.path.join(os.path.dirname(__file__), '..', 'frontend'),
+            static_url_path='/')
 app.secret_key = 'your-secret-key-here-change-in-production'  # Needed for sessions
 
 # Ensure the users table exists
@@ -10,12 +17,7 @@ create_table()
 # Root route — serve landing page
 @app.route("/")
 def index():
-    return send_from_directory(".", "landing.html")
-
-# Serve static HTML files (signup.html, signin.html, etc.)
-@app.route("/<path:filename>")
-def static_files(filename):
-    return send_from_directory(".", filename)
+    return send_from_directory(app.static_folder, "landing.html")
 
 # Handle signup form
 @app.route("/signup", methods=["POST"])
@@ -54,6 +56,13 @@ def signin():
     else:
         print("Signin failed.")
         return jsonify({"success": False, "message": "Invalid email or password."}), 401
+
+# Catch-all for HTML files and static assets
+@app.route("/<path:filename>")
+def serve_static(filename):
+    if filename.endswith('.html'):
+        return send_from_directory(app.static_folder, filename)
+    return send_from_directory(app.static_folder, filename)
 
 if __name__ == "__main__":
     app.run(debug=True)
