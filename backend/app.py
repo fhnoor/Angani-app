@@ -3,11 +3,11 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from flask import Flask, request, redirect, send_from_directory, session, jsonify
-from my_db import create_table, add_user, check_user
+from mydb import create_table, add_user, check_user
 
-# Configure Flask to serve static files from frontend folder
+# Configure Flask to serve static files from root folder
 app = Flask(__name__, 
-            static_folder=os.path.join(os.path.dirname(__file__), '..', 'frontend'),
+            static_folder=os.path.join(os.path.dirname(__file__), '..'),
             static_url_path='/')
 app.secret_key = 'your-secret-key-here-change-in-production'  # Needed for sessions
 
