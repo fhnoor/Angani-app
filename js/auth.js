@@ -3,32 +3,6 @@
 // API base URL pointing to Render backend
 const API_BASE = 'https://angani-backend.onrender.com';
 
-// Password visibility toggle functionality - must run after DOM loads
-document.addEventListener('DOMContentLoaded', function() {
-    const toggleButtons = document.querySelectorAll('.toggle-password-btn');
-    
-    toggleButtons.forEach(function(button) {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const passwordField = button.closest('.password-field');
-            const input = passwordField.querySelector('.password-input');
-            const eyeIcon = button.querySelector('.eye-icon');
-            
-            if (input.type === 'password') {
-                input.type = 'text';
-                eyeIcon.textContent = '🙈';
-                button.classList.add('active');
-            } else {
-                input.type = 'password';
-                eyeIcon.textContent = '👁️';
-                button.classList.remove('active');
-            }
-        });
-    });
-});
-
 async function postForm(path, formData) {
     const response = await fetch(`${API_BASE}${path}`, { method: 'POST', body: formData });
     const contentType = response.headers.get('content-type') || '';
@@ -161,34 +135,6 @@ if (signupForm) {
             setTimeout(() => window.location.href = 'home.html', 800);
         } catch (error) {
             console.error('Signup error:', error);
-            showNotification(`${error.message || 'Network error. Please try again.'}`, 'error');
-        }
-    });
-}
-
-// Handle forgot password form submission
-const forgotPasswordForm = document.getElementById('forgot-password-form');
-if (forgotPasswordForm) {
-    forgotPasswordForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const formData = new FormData(forgotPasswordForm);
-        const email = formData.get('email');
-        
-        if (!email) {
-            showNotification('Please enter your email address.', 'error');
-            return;
-        }
-        
-        try {
-            const data = await postForm('/forgot-password', formData);
-            showNotification('Reset link sent to your email! Check your inbox.', 'success');
-            // Clear the form
-            forgotPasswordForm.reset();
-            // Redirect after a short delay
-            setTimeout(() => window.location.href = 'signin.html', 2000);
-        } catch (error) {
-            console.error('Forgot password error:', error);
             showNotification(`${error.message || 'Network error. Please try again.'}`, 'error');
         }
     });
