@@ -4,6 +4,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from flask import Flask, request, redirect, send_from_directory, session, jsonify
 from flask_cors import CORS
+from flask_mail import Mail, Message
+import secrets
 from mydb import create_table, add_user, check_user, get_user_by_email
 
 # Configure Flask to serve static files from root folder
@@ -14,6 +16,15 @@ app.secret_key = 'your-secret-key-here-change-in-production'  # Needed for sessi
 
 # Enable CORS for Netlify frontend
 CORS(app, supports_credentials=True)
+
+# Configure email settings
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True') == 'True'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'noreply@angani.com')
+mail = Mail(app)
 
 # Ensure the users table exists (will use DATABASE_URL via mydb)
 try:
@@ -78,18 +89,40 @@ def forgot_password():
     
     try:
         user = get_user_by_email(email)
-        # For security, don't reveal if email exists or not
-        print(f"Password reset requested for: {email}")
+        if user:
+            # Generate a temporary password (6 character alphanumeric)
+            temp_password = secrets.token_hex(3)  # e.g., 'a1b2c3'
+            
+            # Send reset email
+            try:
+                msg = Message(
+                    subject='Angani - Password Reset',
+                    recipients=[email],
+                    body=f"""Hello {user['name']},
+
+You requested a password reset for your Angani account.
+
+Temporary Password: {temp_password}
+
+Please sign in with your email and this temporary password, then change it to a permanent one.
+
+If you did not request this, please ignore this email.
+
+Best regards,
+Angani Team"""
+                )
+                mail.send(msg)
+                print(f"Password reset email sent to: {email}")
+            except Exception as mail_error:
+                print(f"Failed to send reset email: {mail_error}")
+                return jsonify({"success": False, "message": "Unable to send reset email. Please try again later."}), 500
         
-        # In a production app, you would:
-        # 1. Generate a unique reset token
-        # 2. Store it in database with expiration time
-        # 3. Send email with reset link containing the token
-        
-        return jsonify({"success": True, "message": "If an account exists, you will receive reset instructions."}), 200
+        # For security, always return same message (don't reveal if email exists)
+        return jsonify({"success": True, "message": "If an account exists, you will receive reset instructions via email."}), 200
     except Exception as e:
         print("Forgot password error:", e)
-        return jsonify({"success": True, "message": "If an account exists, you will receive reset instructions."}), 200
+        # Still return success to not reveal if email is registered
+        return jsonify({"success": True, "message": "If an account exists, you will receive reset instructions via email."}), 200
 
 # DB health check
 @app.route("/health/db")
