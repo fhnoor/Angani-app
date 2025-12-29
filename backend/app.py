@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from flask import Flask, request, redirect, send_from_directory, session, jsonify
 from flask_cors import CORS
-from mydb import create_table, add_user, check_user
+from mydb import create_table, add_user, check_user, get_user_by_email
 
 # Configure Flask to serve static files from root folder
 app = Flask(__name__, 
@@ -64,24 +64,25 @@ def signin():
 # Handle forgot password request
 @app.route("/forgot-password", methods=["POST"])
 def forgot_password():
-    email = request.form.get("email", "").strip()
+    email = request.form.get("email")
     
     if not email:
         return jsonify({"success": False, "message": "Email is required."}), 400
     
-    print("Forgot password request for:", email)  # Debug info
-    
-    # In a real application, you would:
-    # 1. Check if user exists
-    # 2. Generate a reset token
-    # 3. Save token to database with expiration time
-    # 4. Send email with reset link
-    
-    # For now, we'll just return success to simulate the request
-    return jsonify({
-        "success": True, 
-        "message": "If an account exists with this email, you will receive a password reset link shortly."
-    }), 200
+    try:
+        user = get_user_by_email(email)
+        # For security, don't reveal if email exists or not
+        print(f"Password reset requested for: {email}")
+        
+        # In a production app, you would:
+        # 1. Generate a unique reset token
+        # 2. Store it in database with expiration time
+        # 3. Send email with reset link containing the token
+        
+        return jsonify({"success": True, "message": "If an account exists, you will receive reset instructions."}), 200
+    except Exception as e:
+        print("Forgot password error:", e)
+        return jsonify({"success": True, "message": "If an account exists, you will receive reset instructions."}), 200
 
 # Catch-all for HTML files and static assets
 @app.route("/<path:filename>")

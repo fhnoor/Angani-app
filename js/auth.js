@@ -1,9 +1,7 @@
 // Authentication helper for home.html
 
-// API base URL - uses local backend for development, Render for production
-const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:5000'
-    : 'https://angani-backend.onrender.com';
+// API base URL pointing to Render backend
+const API_BASE = 'https://angani-backend.onrender.com';
 
 async function postForm(path, formData) {
     const response = await fetch(`${API_BASE}${path}`, { method: 'POST', body: formData });
@@ -148,7 +146,8 @@ if (forgotPasswordForm) {
     forgotPasswordForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const email = document.querySelector('input[name="email"]').value.trim();
+        const formData = new FormData(forgotPasswordForm);
+        const email = formData.get('email');
         
         if (!email) {
             showNotification('Please enter your email address.', 'error');
@@ -156,17 +155,13 @@ if (forgotPasswordForm) {
         }
         
         try {
-            const formData = new FormData();
-            formData.append('email', email);
-            
             const data = await postForm('/forgot-password', formData);
-            showNotification('Password reset link sent to your email!', 'success');
-            
-            // Optionally redirect back to signin after a delay
-            setTimeout(() => window.location.href = 'signin.html', 2000);
+            showNotification('If an account exists with this email, you will receive password reset instructions.', 'success');
+            forgotPasswordForm.reset();
+            setTimeout(() => window.location.href = 'signin.html', 3000);
         } catch (error) {
             console.error('Forgot password error:', error);
-            showNotification(`${error.message || 'Failed to send reset link. Please try again.'}`, 'error');
+            showNotification(`${error.message || 'Network error. Please try again.'}`, 'error');
         }
     });
 }

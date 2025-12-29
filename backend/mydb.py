@@ -36,3 +36,9 @@ def check_user(email, password):
     if user and check_password_hash(user['password'], password):
         return user
     return None
+
+def get_user_by_email(email):
+    conn = get_db()
+    user = conn.execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
+    conn.close()
+    return user
