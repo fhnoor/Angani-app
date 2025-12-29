@@ -29,12 +29,18 @@
 
                 <label class="field">
                     <span class="label-text">Password</span>
-                    <input type="password" name="password" placeholder="Create a password" autocomplete="new-password">
+                    <div class="password-input-wrapper">
+                        <input type="password" name="password" class="password-input" placeholder="Create a password" autocomplete="new-password">
+                        <button type="button" class="toggle-password" aria-label="Show/hide password">👁️</button>
+                    </div>
                 </label>
 
                 <label class="field">
                     <span class="label-text">Confirm password</span>
-                    <input type="password" name="confirm" placeholder="Repeat password" autocomplete="new-password">
+                    <div class="password-input-wrapper">
+                        <input type="password" name="confirm" class="password-input" placeholder="Repeat password" autocomplete="new-password">
+                        <button type="button" class="toggle-password" aria-label="Show/hide password">👁️</button>
+                    </div>
                 </label>
 
                 <button type="submit" class="btn primary">Create account</button>

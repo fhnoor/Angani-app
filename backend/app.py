@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from flask import Flask, request, redirect, send_from_directory, session, jsonify
 from flask_cors import CORS
-from mydb import create_table, add_user, check_user
+from mydb import create_table, add_user, check_user, get_user_by_email, update_password
 
 # Configure Flask to serve static files from root folder
 app = Flask(__name__, 
@@ -60,6 +60,24 @@ def signin():
     else:
         print("Signin failed.")
         return jsonify({"success": False, "message": "Invalid email or password."}), 401
+
+# Handle forgot password request
+@app.route("/forgot-password", methods=["POST"])
+def forgot_password():
+    email = request.form.get("email")
+    
+    if not email:
+        return jsonify({"success": False, "message": "Email is required."}), 400
+    
+    user = get_user_by_email(email)
+    if not user:
+        # For security, don't reveal if email exists
+        return jsonify({"success": True, "message": "If an account exists with this email, you will receive a reset link."}), 200
+    
+    # In production, you would send an email with a reset link
+    # For now, we'll just confirm the email exists
+    print(f"Password reset requested for: {email}")
+    return jsonify({"success": True, "message": "If an account exists with this email, you will receive a reset link."}), 200
 
 # Catch-all for HTML files and static assets
 @app.route("/<path:filename>")

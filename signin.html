@@ -24,12 +24,15 @@
 
                 <label class="field">
                     <span class="label-text">Password</span>
-                    <input type="password" name="password" placeholder="Your password" autocomplete="current-password">
+                    <div class="password-input-wrapper">
+                        <input type="password" name="password" class="password-input" placeholder="Your password" autocomplete="current-password">
+                        <button type="button" class="toggle-password" aria-label="Show/hide password">👁️</button>
+                    </div>
                 </label>
 
                 <div class="row between">
                     <label class="remember"><input type="checkbox"> Remember me</label>
-                    <a class="small" href="#">Forgot password?</a>
+                    <a class="small" href="forgot-password.html">Forgot password?</a>
                 </div>
 
                 <button type="submit" class="btn primary">Sign in</button>
