@@ -3,6 +3,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from flask import Flask, request, redirect, send_from_directory, session, jsonify
+from flask_cors import CORS
 from mydb import create_table, add_user, check_user
 
 # Configure Flask to serve static files from root folder
@@ -10,6 +11,9 @@ app = Flask(__name__,
             static_folder=os.path.join(os.path.dirname(__file__), '..'),
             static_url_path='/')
 app.secret_key = 'your-secret-key-here-change-in-production'  # Needed for sessions
+
+# Enable CORS for Netlify frontend
+CORS(app, supports_credentials=True)
 
 # Ensure the users table exists
 create_table()
@@ -65,4 +69,4 @@ def serve_static(filename):
     return send_from_directory(app.static_folder, filename)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

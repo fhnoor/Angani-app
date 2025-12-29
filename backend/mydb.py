@@ -1,4 +1,5 @@
 import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
 
 def get_db():
     conn = sqlite3.connect("users.db")
@@ -23,12 +24,15 @@ def create_table():
 def add_user(name, email, password):
     conn = sqlite3.connect("users.db")
     cursor = conn.cursor()
-    conn.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", (name, email, password))
+    hashed_password = generate_password_hash(password)
+    conn.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", (name, email, hashed_password))
     conn.commit()
     conn.close()
 
 def check_user(email, password):
     conn = get_db()
-    user = conn.execute("SELECT * FROM users WHERE email=? AND password=?", (email, password)).fetchone()
+    user = conn.execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
     conn.close()
-    return user
+    if user and check_password_hash(user['password'], password):
+        return user
+    return None
