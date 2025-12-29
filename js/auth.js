@@ -139,3 +139,32 @@ if (signupForm) {
         }
     });
 }
+
+// Handle forgot password form submission
+const forgotPasswordForm = document.getElementById('forgot-password-form');
+if (forgotPasswordForm) {
+    forgotPasswordForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.querySelector('input[name="email"]').value.trim();
+        
+        if (!email) {
+            showNotification('Please enter your email address.', 'error');
+            return;
+        }
+        
+        try {
+            const formData = new FormData();
+            formData.append('email', email);
+            
+            const data = await postForm('/forgot-password', formData);
+            showNotification('Password reset link sent to your email!', 'success');
+            
+            // Optionally redirect back to signin after a delay
+            setTimeout(() => window.location.href = 'signin.html', 2000);
+        } catch (error) {
+            console.error('Forgot password error:', error);
+            showNotification(`${error.message || 'Failed to send reset link. Please try again.'}`, 'error');
+        }
+    });
+}

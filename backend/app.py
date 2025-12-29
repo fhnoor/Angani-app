@@ -61,6 +61,28 @@ def signin():
         print("Signin failed.")
         return jsonify({"success": False, "message": "Invalid email or password."}), 401
 
+# Handle forgot password request
+@app.route("/forgot-password", methods=["POST"])
+def forgot_password():
+    email = request.form.get("email", "").strip()
+    
+    if not email:
+        return jsonify({"success": False, "message": "Email is required."}), 400
+    
+    print("Forgot password request for:", email)  # Debug info
+    
+    # In a real application, you would:
+    # 1. Check if user exists
+    # 2. Generate a reset token
+    # 3. Save token to database with expiration time
+    # 4. Send email with reset link
+    
+    # For now, we'll just return success to simulate the request
+    return jsonify({
+        "success": True, 
+        "message": "If an account exists with this email, you will receive a password reset link shortly."
+    }), 200
+
 # Catch-all for HTML files and static assets
 @app.route("/<path:filename>")
 def serve_static(filename):
