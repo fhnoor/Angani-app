@@ -5,18 +5,21 @@ const API_BASE = 'https://angani-backend.onrender.com';
 
 // Password visibility toggle functionality
 document.addEventListener('DOMContentLoaded', () => {
-    const passwordCheckboxes = document.querySelectorAll('.toggle-password-checkbox');
-    const passwordInputs = document.querySelectorAll('.password-input');
+    const toggleButtons = document.querySelectorAll('.toggle-password-btn');
     
-    passwordCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', (e) => {
-            const isChecked = e.target.checked;
-            const form = e.target.closest('form');
-            const inputs = form.querySelectorAll('.password-input');
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            const passwordField = button.closest('.password-field');
+            const passwordInput = passwordField.querySelector('.password-input');
             
-            inputs.forEach(input => {
-                input.type = isChecked ? 'text' : 'password';
-            });
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                button.classList.add('active');
+            } else {
+                passwordInput.type = 'password';
+                button.classList.remove('active');
+            }
         });
     });
 });
