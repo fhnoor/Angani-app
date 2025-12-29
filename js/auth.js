@@ -3,21 +3,26 @@
 // API base URL pointing to Render backend
 const API_BASE = 'https://angani-backend.onrender.com';
 
-// Password visibility toggle functionality
-document.addEventListener('DOMContentLoaded', () => {
+// Password visibility toggle functionality - must run after DOM loads
+document.addEventListener('DOMContentLoaded', function() {
     const toggleButtons = document.querySelectorAll('.toggle-password-btn');
     
-    toggleButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
+    toggleButtons.forEach(function(button) {
+        button.addEventListener('click', function(e) {
             e.preventDefault();
-            const passwordField = button.closest('.password-field');
-            const passwordInput = passwordField.querySelector('.password-input');
+            e.stopPropagation();
             
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
+            const passwordField = button.closest('.password-field');
+            const input = passwordField.querySelector('.password-input');
+            const eyeIcon = button.querySelector('.eye-icon');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                eyeIcon.textContent = '🙈';
                 button.classList.add('active');
             } else {
-                passwordInput.type = 'password';
+                input.type = 'password';
+                eyeIcon.textContent = '👁️';
                 button.classList.remove('active');
             }
         });

@@ -28,6 +28,45 @@
 .field input { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.02); color: #fff; font-size:14px; }
 .field input:focus { outline: none; box-shadow: 0 6px 18px rgba(102,126,234,0.12); border-color: rgba(102,126,234,0.54); }
 
+/* Password field wrapper */
+.password-field {
+    position: relative;
+}
+
+.password-field .password-input {
+    width: 100%;
+    padding: 12px 45px 12px 14px;
+}
+
+.toggle-password-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: opacity 200ms ease;
+}
+
+.toggle-password-btn:hover {
+    opacity: 1;
+}
+
+.toggle-password-btn.active {
+    opacity: 1;
+}
+
+.eye-icon {
+    font-size: 18px;
+    user-select: none;
+}
+
 .btn { 
     width: 100%; 
     padding: 12px 14px; 
