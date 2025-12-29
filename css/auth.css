@@ -182,39 +182,23 @@
     color: white;
 }
 
-/* Password input wrapper with toggle button */
-.password-input-wrapper {
-    position: relative;
-    display: flex;
+/* Show password checkbox styling - matches "Remember me" */
+.show-password {
+    display: inline-flex;
     align-items: center;
-}
-
-.password-input {
-    flex: 1;
-    padding-right: 45px !important;
-}
-
-.toggle-password {
-    position: absolute;
-    right: 12px;
-    background: none;
-    border: none;
-    color: rgba(255,255,255,0.6);
+    gap: 6px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
     cursor: pointer;
-    font-size: 18px;
-    padding: 6px 8px;
-    transition: color 200ms ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    user-select: none;
+    margin-bottom: 12px;
 }
 
-.toggle-password:hover {
-    color: rgba(255,255,255,0.9);
-}
-
-.toggle-password:active {
-    transform: scale(0.95);
+.show-password input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #6c7bf3;
 }
 
 @media (max-width: 480px) {
