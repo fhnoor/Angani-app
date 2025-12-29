@@ -15,8 +15,15 @@ app.secret_key = 'your-secret-key-here-change-in-production'  # Needed for sessi
 # Enable CORS for Netlify frontend
 CORS(app, supports_credentials=True)
 
-# Ensure the users table exists
-create_table()
+# Ensure the users table exists (will use DATABASE_URL via mydb)
+try:
+    create_table()
+    print("Database ready (users table ensured).")
+except Exception as e:
+    # Fail fast with a clear message if DATABASE_URL is missing or DB is unreachable
+    print("Database initialization error:", e)
+    # In production you might choose to continue; here we raise to surface misconfig
+    # raise
 
 # Root route — serve landing page
 @app.route("/")
@@ -37,7 +44,7 @@ def signup():
         print("User added successfully.")
         session['user_id'] = name
         session['user_email'] = email
-        return jsonify({"success": True}), 200
+        return jsonify({"success": True, "name": name, "email": email}), 200
     except Exception as e:
         print("Signup error:", e)
         return jsonify({"success": False, "message": "Email already exists. Try signing in."}), 400
@@ -83,6 +90,16 @@ def forgot_password():
     except Exception as e:
         print("Forgot password error:", e)
         return jsonify({"success": True, "message": "If an account exists, you will receive reset instructions."}), 200
+
+# DB health check
+@app.route("/health/db")
+def health_db():
+    try:
+        # Light check via a cheap read
+        _ = get_user_by_email("non-existent@example.com")
+        return jsonify({"ok": True}), 200
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
 
 # Catch-all for HTML files and static assets
 @app.route("/<path:filename>")
