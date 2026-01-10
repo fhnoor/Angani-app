@@ -80,7 +80,7 @@ if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
         sessionStorage.removeItem('isLoggedIn');
         sessionStorage.removeItem('userName');
-        window.location.href = 'landing.html';
+        window.location.href = 'index.html';
     });
 }
 
