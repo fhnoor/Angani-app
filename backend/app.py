@@ -39,7 +39,7 @@ except Exception as e:
 # Root route — serve landing page
 @app.route("/")
 def index():
-    return send_from_directory(app.static_folder, "landing.html")
+    return send_from_directory(app.static_folder, "index.html")
 
 # Handle signup form
 @app.route("/signup", methods=["POST"])
