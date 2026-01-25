@@ -101,7 +101,7 @@ function showError(message) {
 
 // Handle continue button click
 continueBtn.addEventListener('click', () => {
-    window.location.href = 'signin.html';
+    window.location.href = 'home.html';
 });
 
 // Initialize the app
